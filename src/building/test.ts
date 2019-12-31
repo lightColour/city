@@ -1,6 +1,6 @@
 // import React from 'react';
 
-// export default class BuildingView extends React.Component {
+// export default class test3 {
 
 //     private scene: THREE.Scene;
 
@@ -11,5 +11,6 @@
 //     }
 
 //     init() {
+//         this.heell = 1;
 //     }
 // }
