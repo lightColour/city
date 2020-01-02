@@ -22,16 +22,18 @@ export const latLongToGlobal = (long: number, lat: number, altitude: number) => 
     );
 }
 
+const longLatOrigin: any = [113.946152, 22.497559];
+
 const lnglatToVector3 = (lnglat) => {
     if (!projection) {
-        projection = d3.geoMercator().center([42.360888, -71.059705]).scale(1000).translate([0, 0]);
+        projection = d3.geoMercator().center(longLatOrigin).scale(100000).translate([0, 0]);
     }
     const [x, y] = projection([lnglat[0], lnglat[1]])
     const z = 0;
     return [y, x, z]
 }
 
-const longLatOrigin = [113.946152, 22.497559];
+
 // const longLatOrigin = [42.360888, -71.059705];
 const origin = latLongToGlobal(longLatOrigin[1], longLatOrigin[0], 0);
 const aboveOrigin = latLongToGlobal(longLatOrigin[1], longLatOrigin[0], 2);
@@ -123,7 +125,7 @@ export const generateMapGeometry = (geoJson: GeoJSON.FeatureCollection): THREE.G
             if (properties.building) {
                 buildings.add(multiBuilding(geometry.coordinates, properties));
             }
-            // buildings.add(multiBuilding(geometry.coordinates, properties));
+            buildings.add(multiBuilding(geometry.coordinates, properties));
         } else {
             console.debug(`Unsupported type: ${feature.geometry.type}`);
         }
@@ -373,7 +375,7 @@ export const extrudePolygon = (poly: PolygonCoordinates, height: number, minHeig
     // console.log(shape)
 
     const geometry = new THREE.ExtrudeBufferGeometry([shape], {
-        depth: 100000,
+        depth: height,
         bevelEnabled: false,
     });
 

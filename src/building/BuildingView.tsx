@@ -117,7 +117,7 @@ export default class BuildingView extends React.Component {
     // 加载模型数据
     private loadData() {
         // boston building
-        axios.get(GeojsonConfig.boston).then(res => {
+        axios.get(GeojsonConfig.building).then(res => {
             // console.log(res);
             if (res.status === 200) {
                 const data: GeoJSON.FeatureCollection = res.data;
