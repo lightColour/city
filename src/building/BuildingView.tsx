@@ -3,8 +3,9 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import axios from 'axios';
 import GeojsonConfig from '../constant/geojsonConfig';
-// import { generateMapGeometry } from './geojson';
-import { generateMapGeometry, rotation, up } from "./geojson";
+import { generateMapGeometry } from './convert';
+import { rotation, up } from "./geojson";
+import { setMapData } from './convert2';
 
 export default class BuildingView extends React.Component {
     
@@ -45,9 +46,9 @@ export default class BuildingView extends React.Component {
         window.addEventListener('resize', () => this.onWindowResize(), false);
 
 
-        this.scene.add(new THREE.ArrowHelper(up, new THREE.Vector3(), 10, 0xff0000));
+        this.scene.add(new THREE.ArrowHelper(up, new THREE.Vector3(), 10));
     this.scene.add(new THREE.AxesHelper(5));
-    this.scene.add(new THREE.ArrowHelper(up.clone().applyMatrix3(rotation), new THREE.Vector3(), 10, 0xff0000));
+    this.scene.add(new THREE.ArrowHelper(up.clone().applyMatrix3(rotation), new THREE.Vector3(), 10));
 
     }
 
@@ -76,7 +77,7 @@ export default class BuildingView extends React.Component {
 
     // 相机
     private initCamera() {
-        this.camera = new THREE.PerspectiveCamera(75, this.innerWidth / this.innerHeight, 20, 30e6);
+        this.camera = new THREE.PerspectiveCamera(75, this.innerWidth / this.innerHeight, 1, 30e6);
         this.camera.position.set(0, 100, 0);
     }
 
@@ -101,9 +102,9 @@ export default class BuildingView extends React.Component {
         //是否自动旋转
         this.controls.autoRotate = false;
         //设置相机距离原点的最近距离
-        this.controls.minDistance  = 100;
+        this.controls.minDistance  = 10;
         //设置相机距离原点的最远距离
-        this.controls.maxDistance  = 200;
+        // this.controls.maxDistance  = 200;
         //是否开启右键拖拽
         this.controls.enablePan = true;
     }
@@ -115,6 +116,7 @@ export default class BuildingView extends React.Component {
 
     // 加载模型数据
     private loadData() {
+        // boston building
         axios.get(GeojsonConfig.boston).then(res => {
             // console.log(res);
             if (res.status === 200) {
@@ -125,6 +127,15 @@ export default class BuildingView extends React.Component {
                 // console.log(this.scene)
             }
         })
+
+        // axios.get(GeojsonConfig.building).then(res => {
+        //     // console.log(res);
+        //     if (res.status === 200) {
+        //         const data = res.data;
+        //         console.log(data)
+        //         setMapData(data, '51', this.scene)
+        //     }
+        // })
     }
 
     private onWindowResize() {
