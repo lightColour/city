@@ -117,25 +117,27 @@ export default class BuildingView extends React.Component {
     // 加载模型数据
     private loadData() {
         // boston building
-        axios.get(GeojsonConfig.building).then(res => {
-            // console.log(res);
-            if (res.status === 200) {
-                const data: GeoJSON.FeatureCollection = res.data;
-                console.log(data)
-                this.buildings = generateMapGeometry(data);
-                this.scene.add(this.buildings);
-                // console.log(this.scene)
-            }
-        })
-
         // axios.get(GeojsonConfig.building).then(res => {
         //     // console.log(res);
         //     if (res.status === 200) {
-        //         const data = res.data;
+        //         const data: GeoJSON.FeatureCollection = res.data;
         //         console.log(data)
-        //         setMapData(data, '51', this.scene)
+        //         this.buildings = generateMapGeometry(data);
+        //         this.scene.add(this.buildings);
+        //         // console.log(this.scene)
         //     }
         // })
+
+        axios.get(GeojsonConfig.building).then(res => {
+            // console.log(res);
+            if (res.status === 200) {
+                const data = res.data;
+                console.log(data)
+                setMapData(data, '51', this.scene)
+            }
+        })
+
+        this.test();
     }
 
     private onWindowResize() {
@@ -175,6 +177,33 @@ export default class BuildingView extends React.Component {
         return (
             <canvas ref={this.canvas} />
         );
+    }
+
+    test() {
+        var length = 12 / 1000, width = 8 / 1000;
+
+        var shape = new THREE.Shape();
+        shape.moveTo( 0,0 );
+        shape.lineTo( 0, width );
+        shape.lineTo( length, width );
+        shape.lineTo( length, 0 );
+        shape.lineTo( 0, 0 );
+
+        var extrudeSettings = {
+            steps: 2,
+            depth: 16,
+            bevelEnabled: true,
+            bevelThickness: 1,
+            bevelSize: 1,
+            bevelOffset: 0,
+            bevelSegments: 1
+        };
+
+        var geometry = new THREE.ExtrudeBufferGeometry( shape, extrudeSettings );
+        var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+        var mesh = new THREE.Mesh( geometry, material ) ;
+        this.scene.add( mesh );
+        console.log(shape)
     }
 
 }

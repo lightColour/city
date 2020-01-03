@@ -5,6 +5,7 @@ export const EARTH_RADIUS = 6.371e6;
 
 let projection = null;
 let counter = 0;
+let counter2 = 0;
 
 export type PolygonCoordinates = number[][][];
 
@@ -23,18 +24,70 @@ export const latLongToGlobal = (long: number, lat: number, altitude: number) => 
 }
 
 const longLatOrigin: any = [113.946152, 22.497559];
+// const longLatOrigin: any = [42.360888, -71.059705];
 
 const lnglatToVector3 = (lnglat) => {
     if (!projection) {
-        projection = d3.geoMercator().center(longLatOrigin).scale(100000).translate([0, 0]);
+        projection = d3.geoMercator().center(longLatOrigin).scale(1000).translate([0, 0]);
     }
     const [x, y] = projection([lnglat[0], lnglat[1]])
     const z = 0;
     return [y, x, z]
 }
 
+const lglt2xyz = (longitude,latitude) => {
+    const radius = 0;
+    var lg = THREE.Math.degToRad(longitude) , lt = THREE.Math.degToRad(latitude);
+    var y = radius * Math.sin(lt);
+    var temp = radius * Math.cos(lt);
+    var x = temp * Math.sin(lg);
+    var z = temp * Math.cos(lg);
+    // console.log(x+","+y+","+z);
+    // return {x:x , y:y ,z:z}
+    return [y, x, z]
+}
 
-// const longLatOrigin = [42.360888, -71.059705];
+const getPosition = (lng, lat, alt) => {
+    var phi = (90-lat)*(Math.PI/180),
+    theta = (lng+180)*(Math.PI/180),
+    radius = alt+200,
+    x = -(radius * Math.sin(phi) * Math.cos(theta)),
+    z = (radius * Math.sin(phi) * Math.sin(theta)),
+    y = (radius * Math.cos(phi));
+    return [y, x, z]
+}
+
+function lonlatToMercator(lon, lat, height) {
+    var z = height ? height : 0;
+    var x = (lon / 180.0) * 20037508.3427892;
+    var y = (Math.PI / 180.0) * lat;
+    var tmp = Math.PI / 4.0 + y / 2.0;
+    y = (20037508.3427892 * Math.log(Math.tan(tmp))) / Math.PI;
+    return { x: x, y: y, z: z };
+  }
+
+// 找到地图的中心对应的经纬度坐标
+var center = lonlatToMercator(longLatOrigin[0], longLatOrigin[1], 1);
+
+function lonlatToThree(lon, lat, height?) {
+var z = height ? height : 0;
+var x = (lon / 180.0) * 20037508.3427892;
+var y = (Math.PI / 180.0) * lat;
+var tmp = Math.PI / 4.0 + y / 2.0;
+y = (20037508.3427892 * Math.log(Math.tan(tmp))) / Math.PI;
+var result = {
+x: x - center.x,
+y: y - center.y,
+z: z - center.z
+};
+// x 越大越远
+// 因为比地图大了 可以让地图整体放大或缩小 然后偏移到大概位置
+return [result.x / 100 + 17, -result.y / 100 + 33];
+// [-result.x / 100 - 14, -result.y / 100 - 35];
+}
+// console.log(lonlatToThree(113.84411, 30.65231));
+
+
 const origin = latLongToGlobal(longLatOrigin[1], longLatOrigin[0], 0);
 const aboveOrigin = latLongToGlobal(longLatOrigin[1], longLatOrigin[0], 2);
 export const up = aboveOrigin.clone().sub(origin).normalize();
@@ -80,54 +133,16 @@ export const generateMapGeometry = (geoJson: GeoJSON.FeatureCollection): THREE.G
         }
         const geometry = feature.geometry as GeoJSON.Geometry;
         // TODO: invert, check properties and then delegate?
-        if (geometry.type === "Polygon") {
-            // remove?
-            if (feature.properties === undefined) {
-                console.log("feature has no properties!");
-                lineGroup.add(polygon(
-                    geometry,
-                    new THREE.LineBasicMaterial({ color: 0x000f40 })
-                ));
-            }
-
+        // if (geometry.type === "Polygon") {
+        //     const properties: any = feature.properties;
+        //     buildings.add(multiBuilding(geometry.coordinates, properties));
+        // }
+        if (geometry.type === "MultiPolygon") {
             const properties: any = feature.properties;
-            if (properties.building) {
-                buildings.add(building(
-                    geometry.coordinates, properties
-                ));
-            }
-            buildings.add(building(
-                geometry.coordinates, properties
-            ));
-
-            if (properties.waterway) {
-                waterways.add(waterway(geometry, properties));
-            }
-
-            if (properties.natural) {
-                naturalGroup.add(natural(geometry, properties));
-            }
-        } else if (geometry.type === "LineString") {
-            lineGroup.add(lineString(
-                geometry,
-                new THREE.LineBasicMaterial({ color: 0x300f40 })
-            ));
-        } else if (geometry.type === "MultiPolygon") {
-            // console.log(feature);
-            if (!feature.properties) {
-                continue;
-            }
-            const properties: any = feature.properties;
-            if (properties.natural) {
-                naturalGroup.add(natural(geometry, properties));
-            }
-
             if (properties.building) {
                 buildings.add(multiBuilding(geometry.coordinates, properties));
             }
             buildings.add(multiBuilding(geometry.coordinates, properties));
-        } else {
-            console.debug(`Unsupported type: ${feature.geometry.type}`);
         }
     }
     console.log(buildings)
@@ -192,7 +207,7 @@ export const naturalMaterial = (properties: any) => {
     });
 }
 
-export const multiBuilding = (multiPoly: PolygonCoordinates[], properties: any): THREE.Group => {
+export const multiBuilding = (multiPoly: PolygonCoordinates[] | any, properties: any): THREE.Group => {
     const group = new THREE.Group();
     for (const poly of multiPoly) {
         // if (counter < 10) {
@@ -209,12 +224,27 @@ export const multiBuilding = (multiPoly: PolygonCoordinates[], properties: any):
 export const building = (poly: PolygonCoordinates | any, properties: any) => {
     const mesh = new THREE.Mesh(
         buildingGeometry(poly, properties),
-        [roofMaterial(properties), buildingMaterial(properties)]
+        [new THREE.MeshBasicMaterial({
+            color: '#3700b1',
+            opacity: 0.7,
+            transparent: true,
+            wireframe: false
+        }), new THREE.MeshBasicMaterial({
+            color: '#5923bc',
+            opacity: 0.7,
+            transparent: true,
+            wireframe: false
+        })]
+        // [roofMaterial(properties), buildingMaterial(properties)]
     );
 
     // NOTE: kinda bs
     (mesh as any).meta = properties;
-
+    // if (counter2 == 0) {
+    //     counter2++;
+    //     console.log(2222222222)
+    //     console.log(mesh)
+    // }
     return mesh;
 }
 
@@ -327,6 +357,7 @@ export const shapeFromPolygon = (poly: PolygonCoordinates): THREE.Shape => {
 
 export const flatPolygon = (poly: PolygonCoordinates): THREE.BufferGeometry => {
     const shape = shapeFromPolygon(poly);
+    console.log(111111111111111)
     const geometry = new THREE.ShapeBufferGeometry(shape);
     const positions = geometry.getAttribute("position");
     for (let i = 0; i < positions.count; i++) {
@@ -364,7 +395,7 @@ export const multiFlatPolygon = (multiPoly: PolygonCoordinates[]): THREE.BufferG
         geom.merge(flatPolygon(polyCoords), 0);
     }
 
-    console.log(geom);
+    // console.log(geom);
     return geom;
 }
 
@@ -373,10 +404,14 @@ export const extrudePolygon = (poly: PolygonCoordinates, height: number, minHeig
 
     const shape = shapeFromPolygon(poly);
     // console.log(shape)
-
-    const geometry = new THREE.ExtrudeBufferGeometry([shape], {
+    if (counter2 == 0) {
+        counter2++;
+        console.log(222222)
+        console.log(shape)
+    }
+    const geometry = new THREE.ExtrudeBufferGeometry(shape, {
         depth: height,
-        bevelEnabled: false,
+        bevelEnabled: false
     });
 
     const positions = geometry.getAttribute("position");
@@ -398,18 +433,22 @@ export const extrudePolygon = (poly: PolygonCoordinates, height: number, minHeig
     for (let i = 0; i < positions.count; i++) {
         if (counter < 10) {
             console.log(positions)
-            console.log(height)
+            // console.log(height)
         }
         // const v = latLongToNav(
         //     positions.getX(i), positions.getY(i), positions.getZ(i) + min
         // );
-        const v = lnglatToVector3([positions.getX(i), positions.getY(i), positions.getZ(i)])
+        const v = lonlatToThree(positions.getX(i), positions.getY(i))
         if (counter < 10) {
             console.log(v)
         }
-        counter++;
-        const roPos = new THREE.Vector3(v[0], v[1], v[2]).applyMatrix3(rotation)
+        
+        const roPos = new THREE.Vector3(v[0], v[1], v[2])//.applyMatrix3(rotation)
         positions.setXYZ(i, roPos.x, roPos.y, roPos.z);
+        if (counter < 10) {
+            console.log(positions)
+        }
+        counter++;
         // positions.setXYZ(i, v.x, v.y, v.z); // z necessary?
     }
 
