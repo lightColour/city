@@ -1,6 +1,7 @@
 import Base from "../Base";
 import Global from "../Global";
 import Index from "./theme/Index";
+import Engine from "../engine/Engine";
 
 const DEG2RAD = Math.PI / 180;
 
@@ -9,6 +10,7 @@ export default class MapProvider extends Base {
     container: string = null;
     map: null;
     renderDom: HTMLElement = null;
+    engine: Engine = null;
 
     constructor(container: string, cfg) {
         super(cfg);
@@ -42,8 +44,11 @@ export default class MapProvider extends Base {
         this.map = new window['AMap'].Map(this.container, this.attr);
     }
 
-    asyncCamera() {
-
+    asyncCamera(engine: Engine) {
+        this.engine = engine;
+        const camera = engine.camera;
+        const scene = engine.scene;
+        const pickScene = engine.picking.pickingScene;
     }
 
     projectFlat() {
