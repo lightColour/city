@@ -8,7 +8,7 @@ const DEG2RAD = Math.PI / 180;
 export default class MapProvider extends Base {
 
     container: string = null;
-    map: null;
+    map: any = null;
     renderDom: HTMLElement = null;
     engine: Engine = null;
 
@@ -49,6 +49,32 @@ export default class MapProvider extends Base {
         const camera = engine.camera;
         const scene = engine.scene;
         const pickScene = engine.picking.pickingScene;
+        this.map.on('camerachange', e => {
+            const mapCamera = e.camera;
+            const fov = mapCamera.fov;
+            const near = mapCamera.near;
+            const far = mapCamera.far;
+            const height = mapCamera.height;
+            const pitch = mapCamera.pitch * DEG2RAD;
+            const rotation = mapCamera.rotation * DEG2RAD;
+            const aspect = mapCamera.aspect;
+            
+            camera.fov = 180 * fov / Math.PI;
+            camera.aspect = aspect;
+            camera.near = near;
+            camera.far = far;
+            camera.updateProjectionMatrix();
+            camera.position.z = height * Math.cos(pitch);
+            camera.position.x = height * Math.sin(pitch) * Math.sin(rotation);
+            camera.position.y = -height * Math.sin(pitch) * Math.cos(rotation);
+            camera.up.x = -Math.cos(pitch) * Math.sin(rotation);
+            camera.up.y = Math.cos(pitch) * Math.cos(rotation);
+            camera.up.z = Math.sin(pitch);
+            camera.lookAt(0, 0, 0);
+            scene.position.x = -e.camera.position.x;
+            scene.position.y = e.camera.position.y;
+
+        })
     }
 
     projectFlat() {
