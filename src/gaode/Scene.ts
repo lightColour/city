@@ -3,6 +3,7 @@ import Global from "./Global";
 import MapProvider from "./map/MapProvider";
 import GaodeMap from "./map/GaodeMap";
 import Engine from "./engine/Engine";
+// import LayerIndex from './'
 
 
 export class Scene extends Base {
@@ -12,6 +13,8 @@ export class Scene extends Base {
 
     map: null;
     engine: Engine = null;
+
+    mapType: null;
 
     constructor(cfg) {
         super(cfg);
@@ -32,9 +35,21 @@ export class Scene extends Base {
         })
         this.map = Map.map;
         Map.asyncCamera(this.engine);
+        this.initLayer();
+        this.emit('loaded');
     }
 
     initEngine(mapContainer: HTMLElement) {
         this.engine = new Engine(mapContainer, this);
+        this.engine.run();
+    }
+
+    initLayer() {
+        const loop = (methodName) => {
+            this[methodName] = cfg => {
+                cfg ? cfg.mapType = this.mapType : cfg = { mapType: this.mapType };
+                const layer = new LayerIndex
+            }
+        }
     }
 }
