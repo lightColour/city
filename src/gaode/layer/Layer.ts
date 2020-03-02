@@ -2,6 +2,8 @@ import * as THREE from 'three';
 import Base from "../Base";
 import Global from '../Global';
 import Util from '../utils/Util';
+import colorUtil from '../utils/ColorUtil';
+import SourceIndex from '../source/Index';
 
 let id = 1;
 
@@ -26,8 +28,11 @@ export default class Layer extends Base {
     layerMesh: null;
 
     needUpdateColor: boolean = false;
+    needUpdateFilter: boolean = false;
     zoomScale: boolean = false;
     shapeType: string = null;
+
+    layerSource: null;
 
     constructor(scene, cfg) {
         super(cfg);
@@ -91,6 +96,11 @@ export default class Layer extends Base {
     source(data) {
         const cfg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
         const dataType = this.getDataType(data);
+        const cfgType = cfg.type;
+        const type = cfgType === void 0 ? dataType : cfgType;
+        cfg.data = data;
+        cfg.mapType = this.get('mapType');
+        this.layerSource = new SourceIndex[type](cfg);
     }
 
     color(field, values) {
@@ -153,9 +163,53 @@ export default class Layer extends Base {
         Util.assign(styleOptions, cfg);
         for (let item in cfg) {
             if (colorItem.indexOf(item) !== -1) {
-                styleOptions[item] = 
+                styleOptions[item] = colorUtil.color2RGBA(styleOptions[item]);
             }
+            styleOptions[item] = styleOptions[item];
         }
+        this.set('styleOptions', styleOptions);
+        return this;
+    }
+
+    filter(field, values) {
+        this.needUpdateFilter = true;
+        this.createAttrOption('filter', field, values, true);
+        return this;
+    }
+
+    animate(field, cfg) {
+        let animateOptions = this.get('animateOptions');
+        if (!animateOptions) {
+            animateOptions = {};
+            this.set('animateOptions', animateOptions);
+        }
+        if (Util.isObject(field)) {
+            cfg = field;
+            field = null;
+        }
+        let fields = null;
+        if (field) {
+            fields = parseFields(field);
+        }
+        animateOptions.fields = fields;
+        Util.assign(animateOptions, cfg);
+        this.set('animateOptions', animateOptions);
+        return this;
+    }
+    
+    hide() {
+        this.visible(false);
+        return this;
+    }
+
+    show() {
+        this.visible(true);
+        return this;
+    }
+
+    createScale(field) {
+        const scales = this.get('scales');
+        const scale = scales[field];
     }
 
     createAttrOption(attrName, field, cfg, defaultValues) {
@@ -182,6 +236,64 @@ export default class Layer extends Base {
         }
         // 给属性赋值，例如颜色，等等
         options[attrName] = attrCfg;
+    }
+
+    init() {
+        // 初始化属性
+        this.initAttrs();
+        // scale 缩放
+        this.scaleByZoom();
+        this.mapping();
+        const activeHander = this.addActiveFeature();
+    }
+
+    addActiveFeature(e) {
+        const featureId = e.featureId;
+        const activeStyle = this.get('activedOptions');
+        const selectFeatureids = this.layerSource;
+        if (this.StyleData[selectFeatureids[0]].hasOwnProperty('filter') && this.StyleData[selectFeatureIds[0]].filter === false) {
+            return;
+        }
+        const style = Util.assign({}, this.StyleData[featureId]);
+        style.color = colorUtil.toRGB(activeStyle.fill).map(e => e / 255);
+        this.updateStyle([featureId], style);
+    }
+
+    initAttrs() {
+        // 获取属性选项
+        const attrOptions = this.get('attrOptions');
+        // 遍历属性选项
+        for (let type in attrOptions) {
+            // 如果属性选项有该属性，则更新属性
+            if (attrOptions.hasOwnProperty(type)) {
+                this.updateAttr(type);
+            }
+        }
+    }
+
+    updateAttr(type) {
+        const attrs = this.get('attrs');
+        const attrOptions = this.get('attrOptions');
+        // 获取更新的选项值
+        const option = attrOptions[type];
+        // 设置该选项可更新
+        option.needUpdate = true;
+
+        const className = Util.upperFirst(type);
+        const fields = parseFields(option.field);
+        // 设置缩放比
+        const scales = [];
+        for (let i = 0; i < fields.length; i++) {
+            const field = fields[i];
+            const scale = this.createScale(field);
+            if (type === 'color' && Util.isNil(option.values)) {
+                option.values = Global.colors;
+            }
+            scales.push(scale);
+        }
+        option.scale = scales;
+        // const attr = new AttrIndex()
+
     }
 
 }

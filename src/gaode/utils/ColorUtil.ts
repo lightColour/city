@@ -43,8 +43,9 @@ const rgb2arr = (str): Array<number> => {
 let iEl = null;
 const colorCache = {}
 
-const colorUtil = {
-    toRGB: color => {
+class ColorUtil {
+
+    toRGB(color) {
         if (color[0] === '#' && color.length === 7) {
             const colorArray = rgb2arr(color);
             colorArray.push(255);
@@ -64,6 +65,43 @@ const colorUtil = {
             if (cArray.length === 4) {
                 cArray[3] *= 255;
             }
+            if (cArray.length === 3) {
+                cArray.push(255);
+            }
+            colorCache[color] = cArray;
+            rst = cArray;
+        }
+        return rst;
+    }
+
+    color2Arr(str) {
+        const rgba = this.toRGB(str);
+        return rgba.map(v => {
+            return v / 255;
+        })
+    }
+
+    color2RGBA(str) {
+        return this.color2Arr(str);
+    }
+
+    rgb2arr: Function = rgb2arr;
+
+    gradient(colors) {
+        const points = [];
+        if (Util.isString(colors)) {
+            colors = colors.split('-');
+        }
+        Util.each(colors, color => {
+            const colorArray = this.toRGB(color).map(e => e / 255);
+            points.push(colorArray);
+        })
+        return percent => {
+            return calColor(points, percent);
         }
     }
 }
+
+const colorUtil = new ColorUtil();
+
+export default colorUtil;
