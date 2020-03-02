@@ -76,7 +76,7 @@ class Scale {
         Util.each(self, function (v, k) {
             cfg[k] = self[k];
         });
-        return new constr(cfg);
+        return new Scale(cfg);
     }
     change(info) {
         this.ticks = null;

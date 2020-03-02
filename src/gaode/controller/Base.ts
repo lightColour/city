@@ -9,13 +9,13 @@ import Log from "./Log";
 import Pow from "./Pow";
 
 
-Base.Linear = Linear;
-Base.Identity = Identity;
-Base.Cat = Category;
-Base.Time = Time;
-Base.TimeCat = TimeCategory;
-Base.Log = Log;
-Base.Pow = Pow;
+Base['Linear'] = Linear;
+Base['Identity'] = Identity;
+Base['Cat'] = Category;
+Base['Time'] = Time;
+Base['TimeCat'] = TimeCategory;
+Base['Log'] = Log;
+Base['Pow'] = Pow;
 var _loop = function _loop(k) {
     if (Base.hasOwnProperty(k)) {
         var methodName = Util.lowerFirst(k);
@@ -31,7 +31,7 @@ var CAT_ARR = [
     'cat',
     'timeCat'
 ];
-Base.isCategory = function (type) {
+Base['isCategory'] = function (type) {
     return CAT_ARR.indexOf(type) >= 0;
 };
 

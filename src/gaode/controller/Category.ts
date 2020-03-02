@@ -3,9 +3,14 @@ import Util from "../utils/Util";
 import CatAuto from "./CatAuto";
 
 class Category extends Scale {
+
+    values;
+    tickCount;
+
     getDefaultCfg() {
         var cfg = super.getDefaultCfg();
-        return Util.mix({}, cfg, {
+        const dist: any = {};
+        return Util.mix(dist, cfg, {
             type: 'cat',
             tickCount: null,
             isCategory: true
@@ -26,7 +31,7 @@ class Category extends Scale {
                     maxCount: tickCount,
                     data: values
                 });
-                ticks = temp.ticks;
+                ticks = temp['ticks'];
             }
             this.ticks = ticks;
         }
@@ -36,7 +41,7 @@ class Category extends Scale {
         if (this.values.indexOf(value) === -1 && Util.isNumber(value)) {
             value = this.values[Math.round(value)];
         }
-        return super.getDefaultCfg(value);
+        return super.getDefaultCfg();
     }
 
     translate(value) {

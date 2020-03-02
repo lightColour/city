@@ -4,7 +4,8 @@ import Util from "../utils/Util";
 class Identity extends Scale {
   getDefaultCfg() {
     var cfg = super.getDefaultCfg();
-    return Util.mix({}, cfg, {
+    const dist: any = {};
+    return Util.mix(dist, cfg, {
       isIdentity: true,
       type: 'identity',
       value: null
