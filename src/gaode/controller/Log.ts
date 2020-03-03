@@ -2,9 +2,19 @@ import Linear from "./Linear";
 import * as Util from "@antv/util";
 
 class Log extends Linear {
+
+    base;
+    min;
+    max;
+    values;
+    _minTick;
+    positiveMin;
+    tickCount;
+
     getDefaultCfg() {
         var cfg = super.getDefaultCfg();
-        return Util.mix({}, cfg, {
+        const dist: any = {};
+        return Util.mix(dist, cfg, {
             type: 'log',
             base: 2,
             tickCount: 10,

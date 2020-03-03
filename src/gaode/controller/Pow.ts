@@ -2,9 +2,16 @@ import * as Util from "@antv/util";
 import Linear from "./Linear";
 
 class Pow extends Linear{
+
+  exponent;
+  max;
+  min;
+  tickCount;
+
   getDefaultCfg() {
     var cfg = super.getDefaultCfg();
-    return Util.mix({}, cfg, {
+    const dist: any = {};
+    return Util.mix(dist, cfg, {
       type: 'pow',
       exponent: 2,
       tickCount: 10

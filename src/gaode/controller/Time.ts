@@ -18,7 +18,8 @@ class Time extends Linear {
 
     getDefaultCfg() {
         var cfg = super.getDefaultCfg();
-        return Util.mix({}, cfg, {
+        const dist: any = {};
+        return Util.mix(dist, cfg, {
             type: 'time',
             mask: 'YYYY-MM-DD'
         });

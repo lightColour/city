@@ -7,6 +7,12 @@ import {cleanCoords} from "@turf/turf";
 import FeatureIndex from "./geo/FeatureIndex";
 
 class GeojsonSource extends  Source{
+
+    type;
+    propertiesData;
+    geoData;
+    featureIndex;
+
     prepareData() {
         var _this = this;
         this.type = 'geojson';
@@ -20,10 +26,12 @@ class GeojsonSource extends  Source{
             _this.propertiesData.push(currentFeature.properties);
         });
     }
-    featureIndex() {
+    
+    getFeatureIndex() {
         var data = this.get('data');
         this.featureIndex = new FeatureIndex(data);
     }
+    
     getSelectFeatureId(featureId) {
         var data = this.get('data');
         var selectFeatureIds = [];

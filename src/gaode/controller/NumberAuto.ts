@@ -44,7 +44,7 @@ export default function (info) {
     var temp = (max - min) / (avgCount - 1);
     interval = AutoUtil.snapFactorTo(temp, snapArray, 'ceil');
     if (maxCount !== minCount) {
-      count = parseInt((max - min) / interval, 10);
+      count = parseInt(`${(max - min) / interval}`, 10);
       if (count > maxCount) {
         count = maxCount;
       }
@@ -61,7 +61,7 @@ export default function (info) {
     min = Util.fixedBase(min, interval);
     max = Util.fixedBase(max, interval);
   } else {
-    avgCount = parseInt(avgCount, 10);
+    avgCount = parseInt(`${avgCount}`, 10);
     var avg = (max + min) / 2;
     var avgTick = AutoUtil.snapMultiple(avg, interval, 'ceil');
     var sideCount = Math.floor((avgCount - 2) / 2);

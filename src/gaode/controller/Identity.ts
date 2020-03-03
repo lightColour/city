@@ -2,6 +2,9 @@ import Scale from "./Scale";
 import Util from "../utils/Util";
 
 class Identity extends Scale {
+
+  value;
+
   getDefaultCfg() {
     var cfg = super.getDefaultCfg();
     const dist: any = {};

@@ -56,14 +56,14 @@ class ScaleController {
         var cfg = { field: field };
         var values = Util['Array'].values(data, field);
         cfg['values'] = values;
-        if (!Scale.isCategory(type) && type !== 'time') {
+        if (!Scale['isCategory'](type) && type !== 'time') {
             var range = Util['Array'].getRange(values);
-            cfg.min = range.min;
-            cfg.max = range.max;
-            cfg.nice = true;
+            cfg['min'] = range.min;
+            cfg['max'] = range.max;
+            cfg['nice'] = true;
         }
         if (type === 'time') {
-            cfg.nice = false;
+            cfg['nice'] = false;
         }
         return cfg;
     }
@@ -76,7 +76,7 @@ class ScaleController {
             if (def && def.type) {
                 scale = Scale[def.type](def);
             } else {
-                scale = Scale.identity({
+                scale = Scale['identity']({
                     value: field,
                     field: field.toString(),
                     values: [field]
@@ -86,7 +86,7 @@ class ScaleController {
         }
         var firstValue = Util['Array'].firstValue(data, field);
         if (Util.isNumber(field) || Util.isNil(firstValue) && !def) {
-            scale = Scale.identity({
+            scale = Scale['identity']({
                 value: field,
                 field: field.toString(),
                 values: [field]

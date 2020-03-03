@@ -4,11 +4,13 @@ import Controller from "../controller/Controller";
 
 class Source extends Base{
 
+    propertiesData;
+    geoData;
+
     constructor(cfg) {
         super(cfg)
-        var _this = this;
-        _this._initControllers();
-        _this.prepareData();
+        this._initControllers();
+        this.prepareData();
     }
 
     getDefaultCfg() {
