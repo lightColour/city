@@ -10,7 +10,6 @@ class Source extends Base{
     constructor(cfg) {
         super(cfg)
         this._initControllers();
-        this.prepareData();
     }
 
     getDefaultCfg() {

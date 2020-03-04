@@ -13,17 +13,21 @@ class GeojsonSource extends  Source{
     geoData;
     featureIndex;
 
+    constructor(cfg) {
+        super(cfg);
+        this.prepareData();
+    }
+
     prepareData() {
-        var _this = this;
         this.type = 'geojson';
         var data = this.get('data');
         this.propertiesData = [];
         this.geoData = [];
-        flattenEach(data, function (currentFeature, featureIndex) {
+        flattenEach(data, (currentFeature, featureIndex) => {
             var coord = getCoords(cleanCoords(currentFeature));
-            _this.geoData.push(_this._coordProject(coord));
+            this.geoData.push(this._coordProject(coord));
             currentFeature.properties._id = featureIndex + 1;
-            _this.propertiesData.push(currentFeature.properties);
+            this.propertiesData.push(currentFeature.properties);
         });
     }
     

@@ -117,10 +117,12 @@ export default class Layer extends Base {
         const cfg = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
         const dataType = this.getDataType(data);
         const cfgType = cfg.type;
+        // geojson
         const type = cfgType === void 0 ? dataType : cfgType;
         cfg.data = data;
         cfg.mapType = this.get('mapType');
         this.layerSource = new SourceIndex[type](cfg);
+        console.log(this.layerSource)
         return this;
     }
 
@@ -362,7 +364,7 @@ export default class Layer extends Base {
         for (var i = 0; i < data.length; i++) {
             var record = data[i];
             var newRecord = {};
-            newRecord['id'] = data[i].id;
+            newRecord['id'] = data[i]._id;
             for (var k in attrs) {
                 if (attrs.hasOwnProperty(k)) {
                     var attr = attrs[k];
@@ -383,6 +385,7 @@ export default class Layer extends Base {
             mappedData.push(newRecord);
         }
         this.StyleData = mappedData;
+        console.log(mappedData)
         return mappedData;
     }
 
