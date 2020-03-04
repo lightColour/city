@@ -15,6 +15,12 @@ export default class MapProvider extends Base {
     constructor(container: string, cfg) {
         super(cfg);
         this.container = container;
+        this.initMap();
+        this.addOverLayer();
+
+        setTimeout(() => {
+            this.emit('mapLoad');
+        }, 3000);
 
     }
 
@@ -41,14 +47,18 @@ export default class MapProvider extends Base {
             this.get('minZoom'),
             this.get('maxZoom')
         ])
-        this.map = new window['AMap'].Map(this.container, this.attr);
+        
+        setTimeout(() => {
+            this.map = new window['AMap'].Map(this.container, this.attrs);
+        }, 1000)
+        // this.map = new window['AMap'].Map(this.container, this.attrs);
     }
 
     asyncCamera(engine: Engine) {
         this.engine = engine;
         const camera = engine.camera;
         const scene = engine.scene;
-        const pickScene = engine.picking.pickingScene;
+        // const pickScene = engine.picking.pickingScene;
         this.map.on('camerachange', e => {
             const mapCamera = e.camera;
             const fov = mapCamera.fov;
@@ -73,7 +83,6 @@ export default class MapProvider extends Base {
             camera.lookAt(0, 0, 0);
             scene.position.x = -e.camera.position.x;
             scene.position.y = e.camera.position.y;
-
         })
     }
 

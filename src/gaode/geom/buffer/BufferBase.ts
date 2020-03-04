@@ -331,8 +331,8 @@ class BufferBase extends Base {
         canvas2.height = 1024;
         var context2 = canvas2.getContext('2d');
         context2.imageSmoothingEnabled = false;
-        context2.webkitImageSmoothingEnabled = false;
-        context2.mozImageSmoothingEnabled = false;
+        // context2.webkitImageSmoothingEnabled = false;
+        // context2.mozImageSmoothingEnabled = false;
         context2.drawImage(canvas, 0, 0, canvas2.width, canvas2.height);
         var texture = new Texture(canvas2);
         texture.needsUpdate = true;

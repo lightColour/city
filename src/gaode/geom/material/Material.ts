@@ -9,7 +9,7 @@ class Material extends ShaderMaterial {
             return;
         }
         this.uniforms[name].value = value;
-        this.uniforms.needsUpdate = true;
+        // this.uniforms.needsUpdate = true;
     }
 
     setDefinesvalue(name, value) {

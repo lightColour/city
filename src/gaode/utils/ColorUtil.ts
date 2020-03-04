@@ -1,6 +1,6 @@
 import Util from "./Util";
 
-const RGB_REG = /rgba?\([\s.,0-9]+)\)/;
+const RGB_REG = /rgba?\([\s.,0-9]+\)/;
 
 const createTmp = () => {
     const i = document.createElement('i');
@@ -61,7 +61,9 @@ class ColorUtil {
             iEl.style.color = color;
             rst = document.defaultView.getComputedStyle(iEl, '').getPropertyValue('color');
             const matchs = RGB_REG.exec(rst);
-            const cArray: Array<any> = matchs[1].split(/\s*,\s*/);
+            console.log('matchs: ' + matchs)
+            const cArray: Array<any> = matchs[0].split(/\s*,\s*/);
+            console.log('cArray: ' + cArray)
             if (cArray.length === 4) {
                 cArray[3] *= 255;
             }

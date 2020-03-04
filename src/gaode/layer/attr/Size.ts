@@ -19,15 +19,16 @@ export default class Size extends AttributeBase {
         var self = this;
         var outputs = [];
         var scales = self.scales;
+        var arr: any = Array.prototype.slice.call(arguments);
         if (self.values.length === 0) {
             var callback = this.callback.bind(this);
-            outputs.push(callback.apply(void 0, arguments));
+            outputs.push(callback.apply(void 0, arr));
         } else {
             if (!Util.isArray(self.values[0])) {
                 self.values = [self.values];
             }
             for (var i = 0; i < scales.length; i++) {
-                outputs.push(self.scaling(scales[i], arguments[i]));
+                outputs.push(self.scaling(scales[i], arr[i]));
             }
         }
         this.domainIndex = 0;

@@ -20,13 +20,13 @@ export default class Engine extends EventEmitter {
         this.scene = new THREE.Scene();
         this.camera = new Camera(container).camera;
         this.renderer = new Renderer(container).renderer;
-        this.picking = new Picking(world, this.renderer, this.camera, this.scene);
+        // this.picking = new Picking(world, this.renderer, this.camera, this.scene);
         this.clock = new Clock();
     }
 
     run() {
         this.update();
-        this.engineID = requestAnimationFrame(this.run)
+        this.engineID = requestAnimationFrame(() => this.run())
     }
 
     stop() {

@@ -3,10 +3,10 @@ import Global from "./Global";
 import MapProvider from "./map/MapProvider";
 import GaodeMap from "./map/GaodeMap";
 import Engine from "./engine/Engine";
-// import LayerIndex from './'
+import LayerIndex from './layer/Index';
 
 
-export class Scene extends Base {
+export default class Scene extends Base {
 
     mapContainer: string = null;
     container: HTMLElement = null;
@@ -15,10 +15,14 @@ export class Scene extends Base {
     engine: Engine = null;
 
     mapType: null;
+    layers: Array<any> = [];
+
+    PolygonLayer;
 
     constructor(cfg) {
         super(cfg);
-
+        this.initMap();
+        this.layers = [];
     }
 
     getDefaultCfg() {
@@ -27,16 +31,19 @@ export class Scene extends Base {
 
     initMap() {
         this.mapContainer = this.get('id');
+        console.log('id: ' + this.mapContainer)
         this.container = document.getElementById(this.mapContainer);
-        const Map = new MapProvider(this.mapContainer, this.attr);
+        const Map = new MapProvider(this.mapContainer, this.attrs);
         Map.on('mapLoad', () => {
             this.initEngine(Map.renderDom);
             const sceneMap = new GaodeMap(Map.map);
+
+            this.map = Map.map;
+            Map.asyncCamera(this.engine);
+            this.initLayer();
+            this.emit('loaded');
         })
-        this.map = Map.map;
-        Map.asyncCamera(this.engine);
-        this.initLayer();
-        this.emit('loaded');
+        
     }
 
     initEngine(mapContainer: HTMLElement) {
@@ -48,8 +55,13 @@ export class Scene extends Base {
         const loop = (methodName) => {
             this[methodName] = cfg => {
                 cfg ? cfg.mapType = this.mapType : cfg = { mapType: this.mapType };
-                const layer = new LayerIndex
+                const layer = new LayerIndex[methodName](this, cfg);
+                this.layers.push(layer);
+                return layer;
             }
+        }
+        for (let methodName in LayerIndex) {
+            loop(methodName);
         }
     }
 }

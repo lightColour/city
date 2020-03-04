@@ -1,4 +1,5 @@
 import PolylineNormals from "../normal/PolylineNormals";
+import { Vector3 } from "three";
 
 export default {
     'meshLine': meshLine,
@@ -21,31 +22,31 @@ function isNativeReflectConstruct() {
         return false;
     }
 }
-function _construct(Parent, args, Class) {
-    if (isNativeReflectConstruct()) {
-        _construct = Reflect.construct;
-    } else {
-        _construct = function _construct(Parent, args, Class) {
-            var a = [null];
-            a.push.apply(a, args);
-            var Constructor = Function.bind.apply(Parent, a);
-            var instance = new Constructor();
-            if (Class)
-                _setPrototypeOf(instance, Class.prototype);
-            return instance;
-        };
-    }
-    return _construct.apply(null, arguments);
-}
-function _setPrototypeOf(o, p) {
-    _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-        o.__proto__ = p;
-        return o;
-    };
-    return _setPrototypeOf(o, p);
-}
-function _toConsumableArray(arr) {
-    return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+// function _construct(Parent, args, Class) {
+//     if (isNativeReflectConstruct()) {
+//         _construct = Reflect.construct;
+//     } else {
+//         _construct = function _construct(Parent, args, Class) {
+//             var a = [null];
+//             a.push.apply(a, args);
+//             var Constructor = Function.bind.apply(Parent, a);
+//             var instance = new Constructor();
+//             if (Class)
+//                 _setPrototypeOf(instance, Class.prototype);
+//             return instance;
+//         };
+//     }
+//     return _construct.apply(null, arguments);
+// }
+// function _setPrototypeOf(o, p) {
+//     _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+//         o.__proto__ = p;
+//         return o;
+//     };
+//     return _setPrototypeOf(o, p);
+// }
+export const _toConsumableArray = (arr): Array<any> => {
+    return _arrayWithoutHoles(arr) || _iterableToArray(arr);
 }
 function _nonIterableSpread() {
     throw new TypeError('Invalid attempt to spread non-iterable instance');
@@ -121,8 +122,8 @@ function meshLine(geo, props, index) {
         ];
         var p1 = new Vector3();
         var p2 = new Vector3();
-        p1.addVectors(new Vector3(current), new Vector3(n1));
-        p2.addVectors(new Vector3(current), new Vector3(n2));
+        p1.addVectors(new Vector3(current), new Vector3(...n1));
+        p2.addVectors(new Vector3(current), new Vector3(...n2));
         points.push([
             p1.x,
             p1.y,

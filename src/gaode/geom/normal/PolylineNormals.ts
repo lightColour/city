@@ -17,7 +17,7 @@ var miter = [
     0,
     0
 ];
-export default function (points, closed) {
+export default function (points, closed?) {
     var curNormal = null;
     var out = [];
     if (closed) {

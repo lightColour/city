@@ -51,7 +51,7 @@ export default class AttributeBase {
         return rstValue;
     }
 
-    callback(value) {
+    callback(value: any) {
         var self = this;
         var scale = self.scales[0];
         var rstValue = null;
@@ -93,7 +93,8 @@ export default class AttributeBase {
     mapping(x, y) {
         var scales = this.scales;
         var callback = this.callback;
-        for (var _len = arguments.length, params = new Array(_len), _key = 0; _key < _len; _key++) {
+        let params: any = new Array(_len);
+        for (var _len = arguments.length, _key = 0; _key < _len; _key++) {
             params[_key] = arguments[_key];
         }
         var values = params;

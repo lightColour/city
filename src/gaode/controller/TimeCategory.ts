@@ -15,7 +15,8 @@ class TimeCategory extends Category {
 
     getDefaultCfg() {
         var cfg = super.getDefaultCfg();
-        return Util.mix({}, cfg, {
+        const dist: any = {};
+        return Util.mix(dist, cfg, {
             type: 'timeCat',
             mask: 'YYYY-MM-DD',
             tickCount: 7

@@ -1,5 +1,5 @@
 import BufferBase from "./BufferBase";
-import ShapeIndex from "../shape";
+import ShapeIndex from "../shape/Index";
 
 class LineBuffer extends BufferBase{
 
@@ -66,7 +66,7 @@ class LineBuffer extends BufferBase{
         } else if (shape === 'arc') {
             return ShapeIndex[shape](geo, props, index);
         }
-        return ShapeIndex.Line(geo, props, index);
+        return ShapeIndex.line.Line(geo, props, index);
     }
     _getArcLineAttributes() {
         var _this2 = this;
@@ -110,7 +110,8 @@ class LineBuffer extends BufferBase{
         coordinates.forEach(function (geo, index) {
             var props = properties[index];
             var positionCount = positions.length / 3;
-            var attr = ShapeIndex.Line(geo, props, positionCount, lineType !== 'soild');
+            // , lineType !== 'soild'
+            var attr = ShapeIndex.line.Line(geo, props, positionCount);
             positions.push.apply(positions, attr.positions);
             normal.push.apply(normal, attr.normal);
             miter.push.apply(miter, attr.miter);

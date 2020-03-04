@@ -1,12 +1,17 @@
 import EventEmitter from "wolfy87-eventemitter"
+import Util from "./utils/Util";
 
 export default class Base extends EventEmitter {
 
-    attr: {}
+    attrs: {}
     destroyed: boolean = false;
 
     constructor(cfg) {
         super();
+        const attrs = { visible: true };
+        const defaultCfg = this.getDefaultCfg();
+        this.attrs = attrs;
+        Util.assign(attrs, defaultCfg, cfg);
     }
 
     getDefaultCfg() {
@@ -14,15 +19,15 @@ export default class Base extends EventEmitter {
     }
 
     get(name: string) {
-        return this.attr[name];
+        return this.attrs[name];
     }
 
     set(name: string, value) {
-        this.attr[name] = value;
+        this.attrs[name] = value;
     }
 
     destroy() {
-        this.attr = {};
+        this.attrs = {};
         this.removeAllListeners();
         this.destroyed = true;
     }

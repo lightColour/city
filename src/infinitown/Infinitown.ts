@@ -140,15 +140,15 @@ export default class Infinitown {
 
     // 加载数据
     private loadData() {
-        axios.get(GeojsonConfig.building).then(res => {
-            // console.log(res);
-            if (res.status === 200) {
-                const data = res.data;
-                console.log(data)
-                this.generateMapGeometry(data);
-                // this.setMapData(data, 'sichuan')
-            }
-        })
+        // axios.get(GeojsonConfig.building).then(res => {
+        //     // console.log(res);
+        //     if (res.status === 200) {
+        //         const data = res.data;
+        //         console.log(data)
+        //         this.generateMapGeometry(data);
+        //         // this.setMapData(data, 'sichuan')
+        //     }
+        // })
     }
 
     /**
