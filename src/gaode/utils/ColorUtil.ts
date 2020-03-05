@@ -1,6 +1,6 @@
 import Util from "./Util";
 
-const RGB_REG = /rgba?\([\s.,0-9]+\)/;
+const RGB_REG = /[\s.,0-9]+/;
 
 const createTmp = () => {
     const i = document.createElement('i');
@@ -73,6 +73,8 @@ class ColorUtil {
             colorCache[color] = cArray;
             rst = cArray;
         }
+        console.log('rst: ');
+        console.log(rst)
         return rst;
     }
 

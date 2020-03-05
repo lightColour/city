@@ -19,6 +19,9 @@ export default class Picking {
     pixelBuffer: Uint8Array = null;
     needUpdate: boolean = false;
 
+    resizeHandler;
+    
+
     constructor(world: any, renderer, camera, scene) {
         this.world = world;
         this.scene = scene;
@@ -74,18 +77,28 @@ export default class Picking {
     }
 
     pick(point, normalisedPoint) {
-        // this.update(point);
-        // const id = this.pixelBuffer[2] * 255 * 255 + this.pixelBuffer[1] * 255 + this.pixelBuffer[0];
-        // if (id === 16646655 || this.pixelBuffer[3] === 0) {
-        //     return;
-        // }
-        // this.raycaster.setFromCamera(normalisedPoint, this.camera);
-        // const intersects = this.raycaster.intersectObjects(this.pickingScene.children, true);
-        // const point2d = {
-        //     x: point.x,
-        //     y: point.y
-        // }
-
+        this.update(point);
+        const id = this.pixelBuffer[2] * 255 * 255 + this.pixelBuffer[1] * 255 + this.pixelBuffer[0];
+        if (id === 16646655 || this.pixelBuffer[3] === 0) {
+            return;
+        }
+        this.raycaster.setFromCamera(normalisedPoint, this.camera);
+        const intersects = this.raycaster.intersectObjects(this.pickingScene.children, true);
+        const point2d = {
+            x: point.x,
+            y: point.y
+        }
+        let point3d;
+        if (intersects.length > 0) {
+            point3d = intersects[0].point;
+        }
+        const item = {
+            featureId: id - 1,
+            point2d: point2d,
+            point3d: point3d,
+            intersects: intersects
+        }
+        this.world.emit('pick', item);
     }
 
     update(point) {

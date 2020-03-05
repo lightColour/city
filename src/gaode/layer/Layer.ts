@@ -192,6 +192,7 @@ export default class Layer extends Base {
                 console.log(item)
                 console.log(styleOptions[item])
                 styleOptions[item] = colorUtil.color2RGBA(styleOptions[item]);
+                console.log(styleOptions[item])
             }
             styleOptions[item] = styleOptions[item];
         }
@@ -253,12 +254,15 @@ export default class Layer extends Base {
         } else if (attrName !== 'color') {
             attrCfg.values = defaultValues;
         }
+        // size {field: 'floor', values: [0, 2000]}
         this.setAttrOptions(attrName, attrCfg);
     }
 
     setAttrOptions(attrName, attrCfg) {
+        console.log('attrName: ' + attrName)
         // 获取属性
         const options = this.get('attrOptions');
+        console.log(options)
         if (attrName === 'size' && this.zoomScale) {
             attrCfg.zoom = this.map.getZoom();
         }
@@ -272,7 +276,7 @@ export default class Layer extends Base {
         // scale 缩放
         this.scaleByZoom();
         this.mapping();
-        const activeHander = this.addActiveFeature(this);
+        const activeHander = this.addActiveFeature.bind(this);
         if (this.get('allowActive')) {
             this.scene.on('pick', activeHander);
         } else {
@@ -281,9 +285,12 @@ export default class Layer extends Base {
     }
 
     addActiveFeature(e) {
+        console.log('pick: ');
+        console.log(e)
         const featureId = e.featureId;
+        console.log('featureId: ' + featureId)
         const activeStyle = this.get('activedOptions');
-        const selectFeatureIds = this.layerSource;
+        const selectFeatureIds = this.layerSource.getSelectFeatureId(featureId);
         if (this.StyleData[selectFeatureIds[0]].hasOwnProperty('filter') && this.StyleData[selectFeatureIds[0]].filter === false) {
             return;
         }
@@ -361,6 +368,7 @@ export default class Layer extends Base {
         var mappedData = [];
         // 属性数据
         var data = this.layerSource.propertiesData;
+        console.log(attrs);
         for (var i = 0; i < data.length; i++) {
             var record = data[i];
             var newRecord = {};

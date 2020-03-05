@@ -41,11 +41,17 @@ class PolygonLayer extends Layer{
         this.init();
         this.type = 'polygon';
         var source = this.layerSource;
+        console.log({
+            shape: this.shape,
+            coordinates: source.geoData,
+            properties: this.StyleData
+        })
         this._buffer = new PolygonBuffer({
             shape: this.shape,
             coordinates: source.geoData,
             properties: this.StyleData
         });
+        console.log(this._buffer)
         var attributes = this._buffer.attributes;
         this.geometry = new BufferGeometry();
         this.geometry.addAttribute('position', new Float32BufferAttribute(attributes.vertices, 3));
