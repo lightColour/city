@@ -6,6 +6,7 @@ import colorUtil from '../utils/ColorUtil';
 import SourceIndex from '../source/Index';
 import { _toConsumableArray } from '../geom/shape/Line';
 import PickingMaterial from '../geom/material/PickingMaterial';
+import AttrIndex from './attr/Index';
 
 let id = 1;
 
@@ -186,13 +187,9 @@ export default class Layer extends Base {
         }
         styleOptions.fields = fields;
         Util.assign(styleOptions, cfg);
-        console.log(styleOptions)
         for (let item in cfg) {
             if (colorItem.indexOf(item) !== -1) {
-                console.log(item)
-                console.log(styleOptions[item])
                 styleOptions[item] = colorUtil.color2RGBA(styleOptions[item]);
-                console.log(styleOptions[item])
             }
             styleOptions[item] = styleOptions[item];
         }
@@ -259,10 +256,8 @@ export default class Layer extends Base {
     }
 
     setAttrOptions(attrName, attrCfg) {
-        console.log('attrName: ' + attrName)
         // 获取属性
         const options = this.get('attrOptions');
-        console.log(options)
         if (attrName === 'size' && this.zoomScale) {
             attrCfg.zoom = this.map.getZoom();
         }
@@ -285,10 +280,7 @@ export default class Layer extends Base {
     }
 
     addActiveFeature(e) {
-        console.log('pick: ');
-        console.log(e)
         const featureId = e.featureId;
-        console.log('featureId: ' + featureId)
         const activeStyle = this.get('activedOptions');
         const selectFeatureIds = this.layerSource.getSelectFeatureId(featureId);
         if (this.StyleData[selectFeatureIds[0]].hasOwnProperty('filter') && this.StyleData[selectFeatureIds[0]].filter === false) {
@@ -332,7 +324,8 @@ export default class Layer extends Base {
             scales.push(scale);
         }
         option.scale = scales;
-        // const attr = new AttrIndex()
+        const attr = new AttrIndex[className](option);
+        attrs[type] = attr;
 
     }
 
@@ -368,7 +361,6 @@ export default class Layer extends Base {
         var mappedData = [];
         // 属性数据
         var data = this.layerSource.propertiesData;
-        console.log(attrs);
         for (var i = 0; i < data.length; i++) {
             var record = data[i];
             var newRecord = {};

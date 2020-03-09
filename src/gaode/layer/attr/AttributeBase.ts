@@ -91,6 +91,7 @@ export default class AttributeBase {
     }
 
     mapping(x, y) {
+        console.log(arguments)
         var scales = this.scales;
         var callback = this.callback;
         let params: any = new Array(_len);
@@ -116,6 +117,7 @@ export default class AttributeBase {
     }
 
     toOriginParam(param, scale) {
+        console.log(param, scale)
         var rst = param;
         if (!scale.isLinear) {
             if (Util.isArray(param)) {

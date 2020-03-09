@@ -61,9 +61,7 @@ class ColorUtil {
             iEl.style.color = color;
             rst = document.defaultView.getComputedStyle(iEl, '').getPropertyValue('color');
             const matchs = RGB_REG.exec(rst);
-            console.log('matchs: ' + matchs)
             const cArray: Array<any> = matchs[0].split(/\s*,\s*/);
-            console.log('cArray: ' + cArray)
             if (cArray.length === 4) {
                 cArray[3] *= 255;
             }
@@ -73,8 +71,6 @@ class ColorUtil {
             colorCache[color] = cArray;
             rst = cArray;
         }
-        console.log('rst: ');
-        console.log(rst)
         return rst;
     }
 
