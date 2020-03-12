@@ -42,6 +42,8 @@ export default class Layer extends Base {
     type;
     pickingId;
 
+    count: number = 0;
+
     constructor(scene, cfg) {
         super(cfg);
         this.scene = scene;
@@ -235,7 +237,12 @@ export default class Layer extends Base {
 
     createScale(field) {
         const scales = this.get('scales');
-        const scale = scales[field];
+        let scale = scales[field];
+        if (!scale) {
+            scale = this.layerSource.createScale(field);
+            scales[field] = scale;
+        }
+        return scale;
     }
 
     createAttrOption(attrName, field, cfg, defaultValues) {
@@ -323,7 +330,7 @@ export default class Layer extends Base {
             }
             scales.push(scale);
         }
-        option.scale = scales;
+        option.scales = scales;
         const attr = new AttrIndex[className](option);
         attrs[type] = attr;
 
@@ -429,7 +436,18 @@ export default class Layer extends Base {
         }
         var indexZoom = params.indexOf('zoom');
         if (indexZoom !== -1) params[indexZoom] = attr.zoom;
-        var values = attr.mapping.apply(attr, params);
+        attr.scales[0].max = 120;
+        attr.scales[0].min = 0;
+        attr.scales[0].nice = true;
+        if (this.count < 2) {
+            console.log(attr);
+            console.log(params);
+            this.count++;
+            console.log(11111111)
+            var values = attr.mapping.apply(attr, params);
+            debugger
+        }
+        
         return values;
     }
 

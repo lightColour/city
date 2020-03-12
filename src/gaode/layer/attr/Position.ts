@@ -15,7 +15,7 @@ export default class Position extends AttributeBase {
         return this;
     }
 
-    mapping(x, y) {
+    mapping(x?, y?) {
         var scales = this.scales;
         var coord = this.coord;
         var scaleX = scales[0];

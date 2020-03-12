@@ -12,6 +12,8 @@ export default class AttributeBase {
 
     names: Array<any> = [];
 
+    count2: number = 0;
+
     constructor(cfg) {
         this.type = 'base';
         this.name = null;
@@ -90,8 +92,13 @@ export default class AttributeBase {
         return scales[index];
     }
 
-    mapping(x, y) {
-        console.log(arguments)
+    mapping() {
+        if (this.count2 == 0) {
+            console.log(222222)
+            console.log(arguments)
+            this.count2++;
+        }
+        
         var scales = this.scales;
         var callback = this.callback;
         let params: any = new Array(_len);
